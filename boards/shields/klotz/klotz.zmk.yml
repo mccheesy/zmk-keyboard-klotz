@@ -1,0 +1,12 @@
+file_format: "1"
+id: klotz
+name: Klotz
+type: shield
+url: https://github.com/GEIGEIGEIST/klotz
+requires: [pro_micro]
+features:
+  - keys
+  - encoder
+siblings:
+  - klotz_left
+  - klotz_right
