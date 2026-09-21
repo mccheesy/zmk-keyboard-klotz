@@ -21,11 +21,11 @@
 include:
   - board: nice_nano//zmk
     shield: klotz_left
-    snippet: studio-rpc-usb-uart zmk-usb-logging
+    snippet: studio-rpc-usb-uart
     artifact-name: klotz_left
   - board: nice_nano//zmk
     shield: klotz_right
-    snippet: studio-rpc-usb-uart zmk-usb-logging
+    snippet: studio-rpc-usb-uart
     artifact-name: klotz_right
   - board: nice_nano//zmk
     shield: settings_reset
