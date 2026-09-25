@@ -1,18 +1,31 @@
 #include <behaviors.dtsi>
+#include <behaviors/num_word.dtsi>
+
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
 
 &lt {
-    quick-tap-ms = <175>;
-    flavor = "balanced";
+    tapping-term-ms = <220>;
+    quick-tap-ms = <220>;
+    flavor = "tap-preferred";
     require-prior-idle-ms = <150>;
 };
 
 &mt {
-    quick-tap-ms = <175>;
-    flavor = "balanced";
+    tapping-term-ms = <220>;
+    quick-tap-ms = <220>;
+    flavor = "tap-preferred";
     require-prior-idle-ms = <150>;
+};
+
+&sk {
+    release-after-ms = <900>;
+    quick-release;
+};
+
+&sl {
+    ignore-modifiers;
 };
 
 / {
@@ -71,6 +84,16 @@
             hold-trigger-key-positions = <0 1 2 3 4 10 11 12 13 14 20 21 22 23 24 30 31 32 33>;
         };
 
+        btclr_ht: bluetooth_clear_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            display-name = "Bluetooth Clear Hold-Tap";
+            bindings = <&btclrall>, <&btclr>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <5000>;
+            flavor = "tap-preferred";
+        };
+
         as_ht: autoshift_hold_tap {
             compatible = "zmk,behavior-hold-tap";
             display-name = "Autoshift Hold-Tap";
@@ -79,6 +102,97 @@
             #binding-cells = <2>;
             tapping-term-ms = <135>;
             flavor = "tap-preferred";
+        };
+
+        numd: num_dance {
+            compatible = "zmk,behavior-tap-dance";
+            display-name = "Num Dance";
+            bindings = <&num_word 2>, <&sl 2>;
+
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+        };
+
+        // Tap: num_word | double-tap: sticky num-layer | hold: num-layer
+        // see: https://github.com/urob/zmk-config/config/base.keymap:116-121
+        mnum: magic_num {
+            compatible = "zmk,behavior-hold-tap";
+            display-name = "Magic Number Layer-Tap";
+            bindings = <&mo>, <&numd>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            quick-tap-ms = <175>;
+            flavor = "balanced";
+        };
+
+        shft_cpwd: shift_capsword {
+            compatible = "zmk,behavior-mod-morph";
+            display-name = "Shift Caps-Word";
+            bindings = <&sk LSHFT>, <&caps_word>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        mshft: magic_shift {
+            compatible = "zmk,behavior-hold-tap";
+            display-name = "Magic Shift";
+            bindings = <&kp>, <&shft_cpwd>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            quick-tap-ms = <175>;
+            flavor = "balanced";
+        };
+
+        bspc_del: bspc_del {
+            compatible = "zmk,behavior-mod-morph";
+            bindings = <&kp BSPC>, <&kp DEL>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        space_sentence: space_sentence {
+            compatible = "zmk,behavior-mod-morph";
+            bindings = <&kp SPACE>, <&sentence>;
+
+            #binding-cells = <0>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+
+        lt_space: lt_space {
+            compatible = "zmk,behavior-hold-tap";
+            bindings = <&kp>, <&space_sentence>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <220>;
+            quick-tap-ms = <175>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
+        };
+
+        rt_bspc: rt_bspc {
+            compatible = "zmk,behavior-hold-tap";
+            bindings = <&kp>, <&bspc_del>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <220>;
+            quick-tap-ms = <175>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
+        };
+
+        rt_shft: rt_shft {
+            compatible = "zmk,behavior-hold-tap";
+            bindings = <&kp>, <&shft_cpwd>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <220>;
+            quick-tap-ms = <175>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
         };
 
         scr_r_l: scroll_right_left {
@@ -104,44 +218,6 @@
             label = "Bluetooth Prev-Next";
             #sensor-binding-cells = <0>;
             bindings = <&bt BT_PRV>, <&bt BT_NXT>;
-        };
-
-        bspc_del: bspc_del {
-            compatible = "zmk,behavior-mod-morph";
-            bindings = <&kp BSPC>, <&kp DEL>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
-
-        rt_bspc: rt_bspc {
-            compatible = "zmk,behavior-hold-tap";
-            bindings = <&kp>, <&bspc_del>;
-
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            quick-tap-ms = <175>;
-            require-prior-idle-ms = <150>;
-            flavor = "balanced";
-        };
-
-        space_sentence: space_sentence {
-            compatible = "zmk,behavior-mod-morph";
-            bindings = <&kp SPACE>, <&sentence>;
-
-            #binding-cells = <0>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
-
-        lt_space: lt_space {
-            compatible = "zmk,behavior-hold-tap";
-            bindings = <&kp>, <&space_sentence>;
-
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            quick-tap-ms = <175>;
-            require-prior-idle-ms = <150>;
-            flavor = "balanced";
         };
     };
 
@@ -179,6 +255,18 @@
             bindings = <&macro_tap>, <&kp DOT &kp SPACE &sk LSHFT>;
 
             label = "SENTENCE";
+        };
+
+        btclr: bluetooth_clear {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_tap>, <&bt BT_CLR>;
+        };
+
+        btclrall: bluetooth_clear_all {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_tap>, <&bt BT_CLR_ALL>;
         };
     };
 
@@ -252,13 +340,13 @@
         };
 
         lb1 {
-            bindings = <&kp ESC>;
+            bindings = <&kp UNDER>;
             key-positions = <14 24>;
             layers = <0>;
         };
 
         rb1 {
-            bindings = <&kp RET>;
+            bindings = <&kp MINUS>;
             key-positions = <15 25>;
             layers = <0>;
         };
@@ -300,10 +388,10 @@
         base {
             display-name = "base";
             bindings = <
-&kp Q        &kp W        &kp F  &kp P              &kp B      &kp J      &kp L             &kp U               &kp Y            &as SQT
-&hml LGUI A  &hml LALT R  &kp S  &hll 1 T           &kp G      &kp M      &hlr 2 N          &kp E               &hmr LALT I      &hmr RGUI O
-&kp Z        &kp X        &kp C  &kp D              &kp V      &kp K      &kp H             &as_ht QMARK COMMA  &as_ht EXCL DOT  &mt ESC RET
-                                 &lt_space LCTRL 0  &sk LSHFT  &sk RSHFT  &rt_bspc RCTRL 0
+&kp Q        &kp W        &kp F  &kp P              &kp B           &kp J      &kp L             &kp U               &kp Y            &as SQT
+&hml LGUI A  &hml LALT R  &kp S  &hll 1 T           &kp G           &kp M      &kp N             &kp E               &hmr LALT I      &hmr RGUI O
+&kp Z        &kp X        &kp C  &kp D              &kp V           &kp K      &kp H             &as_ht QMARK COMMA  &as_ht EXCL DOT  &mt ESC RET
+                                 &lt_space LCTRL 0  &mshft LSHFT 0  &mnum 2 0  &rt_bspc RCTRL 0
             >;
 
             sensor-bindings = <&scr_r_l &scr_u_d>;
@@ -336,11 +424,11 @@
         function {
             display-name = "fun";
             bindings = <
-&kp F11  &kp F12  &kp F13  &kp F14  &kp F15  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
-&kp F1   &kp F2   &kp F3   &kp F4   &kp F5   &trans        &sk RSHFT     &sk RCTRL     &sk LALT      &sk RGUI
-&kp F6   &kp F7   &kp F8   &kp F9   &kp F10  &bt BT_CLR    &trans        &trans        &trans        &trans
-                           &trans   &trans   &trans        &trans
-            >;
+&kp F11  &kp F12  &kp F13  &kp F14  &kp F15  &bt BT_SEL 0   &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4
+&kp F1   &kp F2   &kp F3   &kp F4   &kp F5   &trans         &sk RSHFT     &sk RCTRL     &sk LALT      &sk RGUI
+&kp F6   &kp F7   &kp F8   &kp F9   &kp F10  &btclr_ht 0 0  &trans        &trans        &trans        &trans
+                           &trans   &trans   &trans         &trans
+               >;
 
             sensor-bindings = <&bt_p_n &bt_p_n>;
         };
